@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <base target="_top" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;1,200;1,300;1,400&display=swap" rel="stylesheet">
+    <style>
+      .logo {
+        font-family: 'Montserrat', sans-serif;    
+        font-weight: 600;
+        font-size: 1.3rem;
+        letter-spacing: 0.4px;
+        color:#0A0E2B;
+        text-align: center;
+        margin-top:10px;
+        margin-bottom:10px;
+      }
+      .block {
+        display: block;
+        width: 50%;
+        border: 1px solid #ddd;
+        background-color: #0D0D1D;
+        color: white;
+        padding: 8px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        text-align: center;
+      }    
+      .selected{
+          background-color: #ddd;
+          color: black;
+      }
+      .title{
+        color:#0D0D1D;
+        text-transform: uppercase;
+        letter-spaccing:1px;
+      }
+      input[type=password], select {
+        width: 100%;
+        padding: 4px 15px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      .set-font-small{
+        font-size:14px;
+      }
+      .card-link{
+        cursor: pointer;
+      }
+      .gama-color-btn{
+        background-color:#0A0E2B;
+        color:white;
+      }
+      .gama-color-btn:hover{
+        background-color:#373c5b;
+        color:white;
+      }
+      .gama-color-btn_finder{
+        background-color: #F74C41;
+        color:white;
+      }
+      .gama-color-btn-finder:hover{
+        background-color:#96231A;
+        color:white;
+      }
+      .loader {
+        border: 16px solid #3498db;
+        border-radius: 50%;
+        border-top: 16px solid #0A0E2B;
+        width: 70px;
+        height: 70px;
+        position:fixed;
+        top:100px;
+        left:40%;
+        -webkit-animation: spin 2s linear infinite; /* Safari */
+        animation: spin 2s linear infinite;
+      }
+
+      .footer{
+        width=100%;
+        padding:10px;
+        background-color:#0A0E2B;
+        color:white;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+    </style>
+    <base target="_top" />
+  </head>
+  <body>
+
+    <div id="load" class="loader invisible "></div>
+
+    <div class="container-fluid">
+      <div class="row nav-back">
+          <button class="block" id="open-valid">Validation</button>
+          <button class="block" id="open-finder">Finder</button>
+    </div>
+    <p class="logo">GAMALOGIC</p>
+    <div  id="validation-block">
+      <h5 id="type" class="mt-2 title">Validation</h5> 
+      <b>
+        <span><i class="fa fa-arrow-circle-right" style="font-size:14px;color:#0D0D1D"></i><span>
+          <span id="balance" class="text-success"></span>
+          <span>CREDITS</span>
+          <button id="refresh" class="btn btn-sm btn-outline-info float-right" style="font-size:10px"><i class="fa    fa-refresh"></i></button>
+
+      </b>
+      <div class="d-none" id="rows-numer">
+      <b>
+        <span><i class="fa fa-arrow-circle-right" style="font-size:14px;color:#0D0D1D"></i><span>
+          <span>Total number:</span>
+          <span id="number-emails" class="text-success"></span>
+      </b>
+      </div>
+      <hr>         
+      <input type="password" id="api-key"  placeholder="paste api key here">
+      <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" value="" id="header-box">
+          <label class="form-check-label" for="flexCheckDefault">
+          Add Headers
+          </label>
+      </div>
+      <button id="start-validation" type="button" class="btn w-100 gama-color-btn">Start Validation</button>
+      <button id="start-finder" type="button" class="btn w-100 gama-color-btn_finder d-none">Start Finder</button>
+      <button id="reset" type="button" class="btn btn-outline-info w-100  mt-2">Reset</button>
+      <a href="https://gamalogic.com/" target="_blank"><button type="button" class="btn btn-danger w-100 mt-2">
+        Buy Credits</button>
+        </a>
+      <br>
+      <a href="https://gamalogic.com/#contact" target="_blank" class="link-primary float-right mt-2">
+      <span><i class="fa fa-arrow-circle-right" style="font-size:14px;color:#0D0D1D"></i><span>
+        Contact us
+      </a>
+      <br>
+      <hr>
+      <h5 class="title">Usage</h5>
+        <span><i class="fa fa-arrow-circle-right " style="font-size:12px;color:#0D0D1D"></i><span>
+        <span class="text-muted set-font-small"><a class="card-link">watch tutorial</a> 
+        </span>
+        <br>
+        <br>
+    </div>
+     
+    </div>
+    <footer class="footer">
+      &copy; reserved Gamalogic 2019- <span id="year"></span>
+    </footer>
+    <script>
+ // Attach click handlers after the Sidebar has loaded in Google Docs
+ $(function() {
+   
+   $("#year").text( new Date().getFullYear());
+   
+    $('#refresh').click(function(){
+      $("#load").removeClass("invisible");
+      var key = $("#api-key").val(); 
+      if(key == ""){
+         google.script.run.withSuccessHandler(onResult).inputNull();
+      }else{
+         google.script.run.withSuccessHandler(onRefresh).getBalance();
+      }
+    });
+
+   $('#start-validation').click(function(){
+      $("#load").removeClass("invisible");
+      var key = $("#api-key").val(); 
+      if(key == ""){
+         google.script.run.withSuccessHandler(onResult).inputNull();
+      }else{
+        //0b6c92e73ed84cc0a9703643bfcdb4f3
+        var header=false;
+        if($('#header-box').is(':checked'))
+          {
+            header=true;
+          }
+        google.script.run.withSuccessHandler(onSuccessValidation).displayData(key,header);   
+      }
+    });
+
+    $('#start-finder').click(function(){
+      $("#load").removeClass("invisible");
+      var key = $("#api-key").val(); 
+      if(key == ""){
+         google.script.run.withSuccessHandler(onResult).inputNull();
+      }else{
+        //0b6c92e73ed84cc0a9703643bfcdb4f3
+        google.script.run.withSuccessHandler(onSuccessValidation).startFinder(key);   
+      }
+    });
+
+    function onResult() {
+       $("#load").addClass("invisible");
+    }
+
+    function onSuccessValidation(result) {
+      var results = result;
+      $("#rows-numer").removeClass("d-none");
+       $("#balance").text(result[0]);
+       $("#number-emails").text(result[1]);
+       onResult();
+    }
+
+     function onSuccessFinder(result) {
+       alert(result);
+       onResult();
+     }
+
+     function onRefresh(balance){
+          onResult();
+        $("#balance").text(balance);
+     }
+  $('#reset').click(function(){
+      $("#load").removeClass("invisible");
+      google.script.run.withSuccessHandler(onResult).reset();   
+  });
+
+  $('#open-valid').click(function(){
+       $("#type").text("Validation");
+       $("#start-validation").removeClass("d-none");
+       $("#start-finder").addClass("d-none");
+       $("#reset").removeClass("d-none");
+  });
+  
+  $('#open-finder').click(function(){
+       $("#type").text("Email Finder");
+       $("#start-validation").addClass("d-none");
+       $("#start-finder").removeClass("d-none");
+       $("#reset").addClass("d-none");
+  });
+
+ });
+</script>
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"
+      integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
+
+
+
+
+<!-- 
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    
+  </head>
+  <body>
+    <nav class="navbar-top"></nav>
+    <h1 id="name">Welcome</h1>
+    <p>Please enjoy this helpful script.</p>
+    
+    <p id="test1">This is a paragraph.</p>
+    <p id="test2">This is another paragraph.</p>
+    <p>Input field: <input type="text" id="test3" value="Mickey Mouse"></p>
+
+    <button id="btn1">Set Text</button>
+    <button id="btn2">Set HTML</button>
+    <button id="btn3">Set Value</button>
+    <script>
+ // Attach click handlers after the Sidebar has loaded in Google Docs
+ $(function() {
+
+   function onSuccess(balance) {
+      $("#test3").val(balance);
+      }
+
+  $("#btn1").click(function(){
+    $("#test1").text("Hello world!");
+  });
+
+  $("#btn2").click(function(){
+    $("#test2").html("<b>Hello world!</b>");
+  });
+
+  $("#btn3").click(function(){
+     google.script.run.withSuccessHandler(onSuccess).getBalance("0b6c92e73ed84cc0a9703643bfcdb4f3");   
+  });
+   
+ });
+</script>
+   
+  </body>
+</html> -->

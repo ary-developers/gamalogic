@@ -1,0 +1,369 @@
+function install() {
+  onOpen();
+}
+
+function onOpen() {
+  SpreadsheetApp.getUi()
+  .createAddonMenu() // Add a new option in the Google Docs Add-ons Menu
+  .addItem("Open", "showSidebar")
+  .addSeparator()
+  .addItem("Clain Free Credits", "getFreeCredits")
+  .addItem("How to get an API key?", "getApi")
+  .addItem("Tutorial", "tutorial")
+  .addSeparator()
+  .addItem("About Us", "aboutUs")
+  .addToUi();  // Run the showSidebar function when someone clicks the menu
+}
+
+
+/* Show a 300px sidebar with the HTML from googlemaps.html */
+function showSidebar() {
+  var html = HtmlService.createTemplateFromFile("app")
+    .evaluate()
+    .setTitle("GAMALOGIC v-1.0"); // The title shows in the sidebar
+  SpreadsheetApp.getUi().showSidebar(html);
+}
+function getFreeCredits(){
+    var html = HtmlService.createTemplateFromFile("credits")
+    .evaluate();
+  SpreadsheetApp.getUi().showDialog(html);
+}
+function getApi(){
+    var html = HtmlService.createTemplateFromFile("getapi")
+    .evaluate();
+  SpreadsheetApp.getUi().showDialog(html);
+}
+function tutorial(){
+    var html = HtmlService.createTemplateFromFile("tutorial")
+    .evaluate();
+  SpreadsheetApp.getUi().showDialog(html);
+}
+
+function aboutUs(){
+    var html = HtmlService.createTemplateFromFile("about")
+    .evaluate();
+  SpreadsheetApp.getUi().showDialog(html);
+}
+
+function displayData(apikey,header)
+{
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getActiveSheet();
+  if(header==true){
+    sheet.deleteRow(1);
+    SpreadsheetApp.flush();
+  }
+  count = sheet.getLastRow();
+  if(count<=0){
+    Browser.msgBox("No data Found");
+    return 0;
+  }
+  var row_list = ss.getDataRange().getValues()
+  if (row_list.length >1000){
+    
+  }
+  return 0;
+  if ( 1==2)
+  { 
+    Browser.msgBox("Maximum Email Address allowed is 1000")
+    return 0;
+  }else{
+    var checkKey=getBalance(apikey);
+    if(checkKey=="Unauthorised Access"){
+      return;
+    }
+    payload = create_payload(row_list)
+    result = get_result(payload,apikey)
+  }
+  if (result.getResponseCode() == 200) {
+  var params = JSON.parse(result.getContentText());
+  var result = params.gamalogic_emailid_vrfy;
+  var array_result = [];
+  var color = [];
+  for (var i =0; i < count ; i++)
+  {
+    data_result = [];
+    color[i] = new Array(8);
+    data_result[0] = result[i]["do_you_mean"]
+    data_result[1] = result[i]["is_role"]
+    data_result[2] = result[i]["is_unknown"]
+    data_result[3] = result[i]["is_valid"]
+    data_result[4] = result[i]["is_syntax_valid"]
+    data_result[5] = result[i]["is_catchall"]
+    data_result[6] = result[i]["message"]
+    data_result[7] = result[i]["is_disposable"]
+    color[i][1] = "red";color[i][2] = "red";color[i][3] = "red";color[i][4]
+    = "red";color[i][5] = "red";color[i][6] = "red";color[i][7] = "red";
+    if (!data_result[3] && !data_result[2])
+     {
+       color[i][1] = "red",color[i][2]
+        = "red",color[i][3] = "red",color[i][4] = "red",color[i][5] = "red",color[i][6]
+        = "red",color[i][7] = "red"
+      }else if (data_result[5] && data_result[5]) 
+      {
+        color[i][1] = "yellow",color[i][2]
+        = "yellow",color[i][3] = "yellow",color[i][4] = "yellow",color[i][5] = "yellow",
+        color[i][6] = "yellow",color[i][7] = "yellow" 
+      }else if (data_result[2]) 
+      {
+        color[i][1] = "grey",color[i][2] = "grey",color[i][1] =
+        "grey",color[i][3] = "grey",color[i][4] = "grey",color[i][5] = "grey",color[i][6]
+        = "grey",color[i][7] = "grey"
+      }else if (data_result[3] && !data_result[5]) 
+      {
+        color[i][1] = "green",color[i][2]
+        = "green",color[i][3] = "green",color[i][4] = "green",color[i][5] = "green",color[i][6]
+        = "green",color[i][7] = "green"
+      }
+      array_result.push(data_result)
+    }
+
+     sheet.getRange(1, 2, count, 8).setValues(array_result).setBackgroundColors(color);
+     sheet.insertRowBefore(1)
+    
+        var rows = sheet.getDataRange();
+        var lr = sheet.getRange('A1:I1');
+        lr.setBackground(null);
+        lr = sheet.getRange('A2:I2');
+        var head = new Array(8);
+        head[0] = 'Email Address'
+        head[1] = 'do_you_mean'
+        head[2] = 'is_role'
+        head[3] = 'is_unknown'
+        head[4] = 'is_valid'
+        head[5] = 'is_syntax_valid'
+        head[6] = 'is_catchall'
+        head[7] = 'message'
+        head[8] = 'is_disposable'
+        sheet.getRange(1, 1, 1, 9).setValues([head]).setFontWeight("bold");
+    
+    SpreadsheetApp.flush();
+    var results = [getBalance(apikey),count];
+    return results;
+    
+  }else{
+    Browser.msgBox("Contact support@gamalogic.com");
+    return 0;
+    }
+}
+
+
+function create_payload(row_list) {
+  var payload ={"gamalogic_emailid_vrfy": []}
+    for (var i =0; i < count ; i++)
+    {
+      payload["gamalogic_emailid_vrfy"].push({"emailid" : row_list[i][0] });
+    }
+    count_address = Object.keys(payload["gamalogic_emailid_vrfy"]).length
+    payload =JSON.stringify(payload)
+    return payload
+}
+
+function get_result(payload,apikey) {
+  var url = "https://gamalogic.com/bulkemailvrf/?apikey="+apikey
+  var options =
+  {
+    "method" : "GET",
+    "payload" : payload,
+    'contentType': 'application/json'
+  };
+  var result = UrlFetchApp.fetch(url, options);
+  return result
+}
+
+
+
+
+function getBalance(apikey) {
+  var response = UrlFetchApp.fetch("https://gamalogic.com/creditbalance/?apikey="+apikey);
+  var json = response.getContentText();
+  var data = JSON.parse(json);
+
+  if(data['error_code']==101){
+    Browser.msgBox("Unauthorised Access.Please enter valid API KEY. or Contact support@gamalogic.com");
+    return "Unauthorised Access";
+  }
+
+  return data['Credit_Balance'];
+}
+
+///end validation 
+//dicover
+function startDicovery(apikeyO) {
+var apikey = apikeyO;
+var ss = SpreadsheetApp.getActiveSpreadsheet();
+var sheet = ss.getActiveSheet();
+var row_list = ss.getDataRange().getValues()
+if (row_list.length <10001){
+email_list = email_address_bulider(row_list)
+}
+else{
+Browser.msgBox("Maximum 1000 list only allowed")
+return}
+payload = create_payloadFinder(email_list)
+result_list = verify_list(payload,apikey)
+if (result_list.getResponseCode() == 200) {
+
+}
+else{
+Browser.msgBox("Error in you response")
+return
+}}
+
+//start finder
+function startFinder(apikeyO) {
+var apikey = apikeyO;
+var ss = SpreadsheetApp.getActiveSpreadsheet();
+var sheet = ss.getActiveSheet();
+var row_list = ss.getDataRange().getValues()
+if (row_list.length <51){
+email_list = email_address_bulider(row_list)
+}
+else{
+Browser.msgBox("Maximum 50 list only allowed")
+return}
+payload = create_payloadFinder(email_list)
+result_list = verify_list(payload,apikey)
+if (result_list.getResponseCode() == 200) {
+var params = JSON.parse(result_list.getContentText());
+var result = params.gamalogic_emailid_vrfy;
+var list_result = grid_result(result);
+var list_ = list_result[0];
+colors_list = list_result[1];
+sheet.getRange(2,4,list_.length,20).setValues(list_).setBackgroundColors(colors_list);
+var results = [getBalance(apikey),list_.length];
+    return results;
+}
+else{
+Browser.msgBox("Error in you response")
+return
+}}
+function email_address_bulider(row_list) {
+var email_list = [];
+for(i=1;i< row_list.length;i++)
+{
+FN=row_list[i][0].split(" ").join("").toLowerCase();
+LN=row_list[i][1].split(" ").join("").toLowerCase();
+URL=row_list[i][2].split(" ").join("").toLowerCase().
+replace('http://','').replace('https://','').
+replace('www.','').split(/[/?#]/)[0];;
+email_list.push(FN.concat(LN.concat("@".concat(URL))))
+email_list.push(LN.concat(FN.concat("@".concat(URL))))
+email_list.push(FN.concat("@".concat(URL)))
+email_list.push(LN.concat("@".concat(URL)))
+email_list.push(FN.concat("_".concat(LN.concat("@".concat(URL)))))
+email_list.push(FN.concat(".".concat(LN.concat("@".concat(URL)))))
+email_list.push(FN.concat("-".concat(LN.concat("@".concat(URL)))))
+email_list.push(LN.concat("_".concat(FN.concat("@".concat(URL)))))
+email_list.push(LN.concat(".".concat(FN.concat("@".concat(URL)))))
+email_list.push(LN.concat("-".concat(FN.concat("@".concat(URL)))))
+email_list.push(FN.charAt(0).concat(LN.concat("@".concat(URL))))
+email_list.push(FN.concat(LN.charAt(0).concat("@".concat(URL))))
+email_list.push(FN.charAt(0).concat("_".concat(LN.concat("@".concat(URL)))))
+email_list.push(FN.charAt(0).concat(".".concat(LN.concat("@".concat(URL)))))
+email_list.push(FN.charAt(0).concat("-".concat(LN.concat("@".concat(URL)))))
+email_list.push(FN.concat("_".concat(LN.charAt(0).concat("@".concat(URL)))))
+email_list.push(FN.concat(".".concat(LN.charAt(0).concat("@".concat(URL)))))
+email_list.push(FN.concat("-".concat(LN.charAt(0).concat("@".concat(URL)))))
+email_list.push(FN.charAt(0).concat(LN.charAt(0).concat("@".concat(URL))))
+email_list.push(FN.charAt(0).concat(".".concat(LN.charAt(0).concat("@".concat(URL)))))
+}
+return email_list
+}
+function create_payloadFinder(email_list) {
+var payload = {"gamalogic_emailid_vrfy": []}
+for (var i =0; i < email_list.length ; i++)
+{
+payload["gamalogic_emailid_vrfy"].push({"emailid" : email_list[i] });
+}
+payload =JSON.stringify(payload)
+return payload
+}
+function verify_list(payload,apikey) {
+var url = "https://gamalogic.com/bulkemailvrf/?apikey="+apikey
+var options =
+{
+"method" : "GET",
+"payload" : payload,
+'contentType': 'application/json'
+};
+var result = UrlFetchApp.fetch(url, options);
+return result;
+}
+function grid_result(result) {
+no_of_list = result.length/20
+array_result = new Array(no_of_list);
+var color = [];
+for (var k=0; k< no_of_list; k++){
+array_result[k] = new Array(20).fill(null);
+color[k] = new Array(20).fill(null);
+for (var i =0,j=0; i< 20; i++)
+{
+if (result[i+(k*20)]["is_valid"] && !(result[i+(k*20)]
+["is_duplicate"]) && !(result[i+(k*20)]
+["is_disposable"]) && !(result[i+(k*20)]["is_unknown"]) )
+{
+array_result[k][j]= result[i+(k*20)]["emailid"]
+if (result[i+(k*20)]["is_catchall"])
+{color[k][j] = "yellow";}
+else{color[k][j] = "green";}
+j++
+} } }
+return [array_result, color];
+}
+///// messages 
+
+function inputNull(){
+  Browser.msgBox("Please put the API Key in the field.");
+}
+
+//reset function
+function reset(){
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getActiveSheet();
+  sheet.clear();
+}
+
+
+//add headers 
+
+function vHeaders(){
+        var ss = SpreadsheetApp.getActiveSpreadsheet();
+        var sheet = ss.getActiveSheet();
+        var lr = sheet.getRange('A1:I1');
+        lr.setBackground(null);
+        lr = sheet.getRange('A2:I2');
+        var head = new Array(8);
+        head[0] = 'Email Address'
+        head[1] = 'do_you_mean'
+        head[2] = 'is_role'
+        head[3] = 'is_unknown'
+        head[4] = 'is_valid'
+        head[5] = 'is_syntax_valid'
+        head[6] = 'is_catchall'
+        head[7] = 'message'
+        head[8] = 'is_disposable'
+        sheet.insertRowBefore(1)
+        sheet.getRange(1, 1, 1, 9).setValues([head]).setFontWeight("bold");
+        SpreadsheetApp.flush();
+}
+
+function fHeaders(){
+        var ss = SpreadsheetApp.getActiveSpreadsheet();
+        var sheet = ss.getActiveSheet();
+        var head = new Array(2);
+        head[0] = 'First Name'
+        head[1] = 'Last Name'
+        head[2] = 'Company Url'
+        sheet.getRange(1, 1, 1, 3).setValues([head]).setFontWeight("bold");
+        SpreadsheetApp.flush();
+}
+
+function removeHeader(){
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getActiveSheet();
+    sheet.deleteRow(1);
+    SpreadsheetApp.flush();
+}
+
+
